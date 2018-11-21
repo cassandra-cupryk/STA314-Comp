@@ -7,7 +7,7 @@ library(class) #for k-nn regression
 
  #getwd() # show current working directory. this is where on the computer
  # files are saved by default and where R looks ofr files
-setwd('/Users/cassie/Desktop/STA314 - Competition/') # change to a different directory
+setwd('/Users/cassie/Desktop/STA314-Comp/') # change to a different directory
 # pick the right directory on your computer
  mydata = read.csv(file = 'trainingdata.csv') # read a file from the working directory
 
@@ -70,44 +70,14 @@ setwd('/Users/cassie/Desktop/STA314 - Competition/') # change to a different dir
 
  plot(X1,y, main = 'K = 25')
  lines(1:500,pr5, lwd=2, col = 2)
+ plot(pr5, y - pr5,ylim = c(-10,10), xlab = 'predicted values', ylab = 'residuals', main = 'K=25')
 
  plot(X1,y, main = 'K = 100')
  lines(1:500,pr25, lwd=2, col = 2)
+ plot(pr25, y - pr25,ylim = c(-10,10), xlab = 'predicted values', ylab = 'residuals', main = 'K=100')
 
  plot(X1,y, main = 'K = 300')
  lines(1:500,pr50, lwd=2, col = 2)
 
  plot(X1,y, main = 'K = 499')
  lines(1:500,pr100, lwd=2, col = 2)
-
- #Multiple Linear Regression
- 
- 
- # note: we could (and should) also have removed X in the very beginning
- # one way to do that
- names(mydata)
- dim(mydata)
- mydataNew = mydata[,-1]
- names(mydataNew)
- 
- lmMulti = lm(y ~ ., data = mydataNew)
- lmMulti$coefficients
- summary(lmMulti)
- prlmMulti = predict(lmMulti)
- 
- 
- #Removed predictors that have a p-value greater than 0.05
- lmMultiUseful = lm(y ~ X1+X2+X3+X4+X8+X12+X13+X23+X24+X25, data = mydataNew)
- summary(lmMultiUseful)
- prlmMultiUseful = predict(lmMultiUseful)
- 
- 
- #Submission - GOTTA ASK
- da.sample = data.frame(cbind(1:500, y.pr))
- names(da.sample) = c('id', 'y')
- write.csv(da.sample, file = "Submission.csv", row.names = FALSE)
- 
- 
- 
- 
- 

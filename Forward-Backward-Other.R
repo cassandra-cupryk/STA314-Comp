@@ -26,12 +26,14 @@ summary(regfit.best)
 
 # note: by default only search up to 8 predictors
 
-regfit.best = regsubsets(y~.,data = training,nvmax = 11)
+regfit.best = regsubsets(y~.,data = training,nvmax = 28)
 summary(regfit.best)
 
 # to extract coefficients from one particular model, 
 # for example model with 4 predictors
-coef(regfit.best,4)
+coef(regfit.best,28)
+
+
 
 #-----------------------------------------------------------------------
 # look at forward stepwise
@@ -41,10 +43,10 @@ summary(regfit.forward)
 
 # note: for example for k = 4 we get a different model compared
 # to the result from best subset selection.
-coef(regfit.forward,4)
-#X1, X12, X23, X25
-coef(regfit.forward,5)
-#X1, X8, X12, X23, X25
+coef(regfit.forward,8)
+
+#best number of predictors is 8
+#X1, X2, X3, X4, X8, X12, X23, X25
 
 #-----------------------------------------------------------------------
 # look at backward stepwise
@@ -55,10 +57,9 @@ summary(regfit.backward)
 # note: we again get different models compared
 # to forward stepwise and best subset
 
-coef(regfit.backward,4)
-#X1, X12, X23, X25
-coef(regfit.backward,5)
-#X1, X8, X12, X23, X25
+coef(regfit.backward,8)
+#best number of predictors is 8
+#X1, X2, X3, X4, X8, X12, X23, X25
 
 #-----------------------------------------------------------------------
 # now look at methods using adjusted R^2, C_p, BIC 
@@ -77,8 +78,24 @@ which.max(adjr2)
 which.min(cp)
 which.min(bic)
 
+#red dots relates to the model selected
+
+# plot the results
+# red points will indictae the number of predictors selected by each
+# Cp, BIC, Adjusted R^2
+par(mfrow = c(1,3))
+plot(adjr2,type='l',xlab='number of predictors',ylab = 'Adjusted R^2')
+points(adjr2)
+points(which.max(adjr2),adjr2[which.max(adjr2)],col = 'red')
+plot(cp,type='l',xlab='number of predictors',ylab = 'Cp')
+points(cp)
+points(which.min(cp),cp[which.min(cp)],col = 'red')
+plot(bic,type='l',xlab='number of predictors',ylab = 'BIC')
+points(bic)
+points(which.min(bic),bic[which.min(bic)],col = 'red')
 
 
+#BIC agrees that the best number of predictors is 10
 
  #Submission - GOTTA ASK
  da.sample = data.frame(cbind(1:500,  prlmMultiUseful))

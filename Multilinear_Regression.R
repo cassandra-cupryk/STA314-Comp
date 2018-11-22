@@ -15,7 +15,7 @@ setwd('/Users/cassie/Desktop/STA314-Comp/') # change to a different directory
  names(mydataNew) # names of entries in res
  attach(mydataNew) # make elements of res available in workspace
  
- y = mydata$y # values of response variable
+ #y = mydata$y # values of response variable
  
  #Multiple Linear Regression
  # note: we could (and should) also have removed X in the very beginning
@@ -50,18 +50,23 @@ setwd('/Users/cassie/Desktop/STA314-Comp/') # change to a different directory
  summary(lmMultiInteraction)
  #Residual Standard Error = 0.7809
  
+ #2.37392
+ 
  lmMultiInteractionUseful = lm(y ~ X1+X2+X3+X4+X8+X12+X13+X23+X24+X25+(X1:X25)+(X2:X8)+(X2:X12)+(X3:X8)+(X3:X12)+(X4:X8)+(X8:X25)+(X12:X13), data = mydataNew)
  summary(lmMultiInteractionUseful)
  #Residual Standard Error = 0.7774
  prlmMultiInteractionUseful = predict(lmMultiInteractionUseful)
  plot(prlmMultiInteractionUseful, y - prlmMultiInteractionUseful,ylim = c(-5,5), xlab = 'predicted values', ylab = 'residuals', main = 'Multi Interaction with Useful Predictors')
 
+ #2.37572 - Probably Overfits
+ 
  
  #Submission - GOTTA ASK
- da.sample = data.frame(cbind(1:500,  prlmMultiUseful))
+ da.sample = data.frame(cbind(1:500,   prlmMultiInteractionUseful))
  names(da.sample) = c('id', 'y')
  write.csv(da.sample, file = "MultilinearSubmission.csv", row.names = FALSE)
- 
+
+  
  
  
  

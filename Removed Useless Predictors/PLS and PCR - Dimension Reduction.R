@@ -1,55 +1,67 @@
 # clear workspace
 rm(list = ls())
 
+#CAN'T FIX
 
 #install.packages('glmnet')
 #install.packages('ISLR')
-install.packages('pls')
+#install.packages('pls')
 
 library(glmnet) # this contains procedures for fitting ridge and lasso
 library(ISLR)   # load for data set Hitters
 library(pls)    # contains functions for fitting PLS and PCR
 
+
+setwd('/Users/cassie/Desktop/STA314-Comp/')
+
+training = read.csv('/Users/cassie/Desktop/STA314-Comp/trainingdata.csv')
+testing = read.csv('/Users/cassie/Desktop/STA314-Comp/test_predictors.csv')
 # this part is same as last lecture, preparing data
-trainingdata = read.csv('/Users/cassie/Desktop/STA314-Comp/trainingdata.csv')
-training = na.omit(trainingdata)
+#training = na.omit(trainingdata)
 attach(training)
+attach(testing)
 
 
-#Hitters = na.omit(Hitters) # remove missing values
-#attach(Hitters)
-
+x = model.matrix(y ~ . ,data=training )
 y = training$y
 
-set.seed(1)
 
-train = sample(1:nrow(x),nrow(x)/2) 
-test = (-train)
-
-
-test = (-train)
+train = sample(1:nrow(x),nrow(x)) 
+length(train)
+test = sample(1:nrow(testing), nrow(testing))
+test
 ytest = y[test]
-x = model.matrix(Salary ~ . ,Hitters )[,-1]  
-# bring data in format that glmnet can deal with
-# [,-1] is to remove intercept
+ytest
 
-
-set.seed(1)
 # function pcr performs principal components regression
 # subset = train means that only data from subset
 # with that index are used for fitting
 # scale = TRUE means that all predictors are scaled
 # to have sample standard deviation 1
 # validation = CV means that cross-validation is also run
+set.seed(2)
+pcr.fit = pcr(y~., data=training ,scale =TRUE,validation ="CV")
+summary(pcr.fit)
+length(pcr.fit)
+validationplot(pcr.fit, val.type = "MSEP")
+#28
 
-
-pcr.fit = pcr(Salary~., data=Hitters ,subset = train ,scale =TRUE ,validation ="CV")
-
+set.seed(1)
+pcr.fit = pcr(y~., data=training ,subset = train ,scale =TRUE,validation ="CV")
+pcr.fit
 # to select number of components via CV by looking at graph
 # ignore the row adjCV
 validationplot(pcr.fit, val.type = "MSEP")
 # also heplful:
 summary(pcr.fit)
+length(pcr.fit)
+length(test)
+validationplot(pcr.fit, val.type = "MSEP")
+
+
+x[test,]
+pred.pcr = predict(pcr.fit ,x[test ,], ncomp= 28)
+
 
 # to get best number of components automaticaslly run crossval function
 # MSE (Mean Square Error)
@@ -65,7 +77,7 @@ selectNcomp(pcr.fit, method = "onesigma", plot = TRUE)
 # best number of components is 7 via stadard cv
 # is 2 based on 1se for cv
 # look at test error with this particular number of components 
-pred.pcr = predict(pcr.fit ,x[test ,], ncomp= 7)
+pred.pcr = predict(pcr.fit ,x[test ,], ncomp= 28)
 mean((pred.pcr-Salary[test])^2)  # estimated prediction error
 
 
@@ -76,16 +88,16 @@ mean((pred.pcr-Salary[test])^2)  # estimated prediction error
 set.seed(1)
 # function plsr performs partial least squares regression
 # substitue pcr with plsr
-pls.fit = plsr(Salary~., data=Hitters ,subset = train ,scale =TRUE ,validation ="CV")
+pls.fit = plsr(y~., data=training ,subset = train ,scale =TRUE ,validation ="CV")
 # to select number of components via CV, use following function
 validationplot(pls.fit, val.type = "MSEP")
-
+summary(pls.fit)
 #select a smaller amount of directions
 # adapt to data more
 
 # best number of components is 2 in this case
 # look at test error with this particular number of components 
-pred.pls = predict(pls.fit ,x[test ,], ncomp= 2)
+pred.pls = predict(pls.fit ,x[test ,], ncomp= 12)
 
 mean((pred.pls-Salary[test])^2)  # estimated prediction error
 mean((pred.pcr-Salary[test])^2)  # estimated prediction error

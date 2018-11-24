@@ -26,13 +26,14 @@ summary(regfit.best)
 
 # note: by default only search up to 8 predictors
 
-regfit.best = regsubsets(y~.,data = training,nvmax = 28)
+regfit.best = regsubsets(y~.,data = training,nvmax = 10)
 summary(regfit.best)
+
 
 # to extract coefficients from one particular model, 
 # for example model with 4 predictors
-coef(regfit.best,28)
-
+coef(regfit.best,10)
+#plot(regfit.best, scale="bic")
 
 
 #-----------------------------------------------------------------------
@@ -46,7 +47,7 @@ summary(regfit.forward)
 coef(regfit.forward,8)
 
 #best number of predictors is 8
-#X1, X2, X3, X4, X8, X12, X23, X25
+#X1, X2, X4, X5, X8, X12, X23, X25
 
 #-----------------------------------------------------------------------
 # look at backward stepwise
@@ -94,10 +95,11 @@ plot(bic,type='l',xlab='number of predictors',ylab = 'BIC')
 points(bic)
 points(which.min(bic),bic[which.min(bic)],col = 'red')
 
-
+coef(regfit.best, 10)
 #BIC agrees that the best number of predictors is 10
+#X1, X2, X3, X4, X8, X12, X13, X23, X24, X25
 
- #Submission - GOTTA ASK
+ #Submission
  da.sample = data.frame(cbind(1:500,  prlmMultiUseful))
  names(da.sample) = c('id', 'y')
  write.csv(da.sample, file = "Submission.csv", row.names = FALSE)
